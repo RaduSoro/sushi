@@ -41,6 +41,7 @@ public class ServerWindow extends JFrame implements UpdateListener {
 				jtp.setTabPlacement(JTabbedPane.LEFT);
 				jtp.addTab("Postcodes", new PostcodesPanel());
 			    jtp.addTab("Drones", new DronesPanel());
+			    //this is a test
 			    jtp.addTab("Staff", new StaffPanel());
 			    jtp.addTab("Suppliers ", new SuppliersPanel());
 			    jtp.addTab("Ingredients", new IngredientsPanel());
