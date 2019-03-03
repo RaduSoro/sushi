@@ -36,19 +36,19 @@ public class ServerWindow extends JFrame implements UpdateListener {
 				setSize(800,600);
 				setLocationRelativeTo(null);
 				setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				JTabbedPane jtp = new JTabbedPane();
-				
-				jtp.setTabPlacement(JTabbedPane.LEFT);
-				jtp.addTab("Postcodes", new PostcodesPanel());
-			    jtp.addTab("Drones", new DronesPanel());
-			    //this is a test
-			    jtp.addTab("Staff", new StaffPanel());
-			    jtp.addTab("Suppliers ", new SuppliersPanel());
-			    jtp.addTab("Ingredients", new IngredientsPanel());
-			    jtp.addTab("Dishes", new DishesPanel());
-			    jtp.addTab("Orders ", new OrdersPanel());
-			    jtp.addTab("Users ", new UserPanel());
-			    add(jtp);
+
+				//tab stuff
+				JTabbedPane tabs = new JTabbedPane();
+				tabs.setTabPlacement(JTabbedPane.LEFT);
+				tabs.addTab("Postcodes", new PostcodesPanel());
+			    tabs.addTab("Drones", new DronesPanel());
+			    tabs.addTab("Staff", new StaffPanel());
+			    tabs.addTab("Suppliers ", new SuppliersPanel());
+			    tabs.addTab("Ingredients", new IngredientsPanel());
+			    tabs.addTab("Dishes", new DishesPanel());
+			    tabs.addTab("Orders ", new OrdersPanel());
+			    tabs.addTab("Users ", new UserPanel());
+			    add(tabs);
 				setVisible(true);
 				
 				//Start timed updates
@@ -81,62 +81,4 @@ public class ServerWindow extends JFrame implements UpdateListener {
 	}
 	
 }
-class PostcodesPanel extends JPanel {
-
-	  public PostcodesPanel() {
-	    JButton b1 = new JButton("New York");
-	    add(b1);
-	  }
-	}
-class DronesPanel  extends JPanel {
-
-	  public DronesPanel () {
-	    JButton b1 = new JButton("New York");
-	    add(b1);
-	  }
-	}
-
-class StaffPanel extends JPanel {
-
-	  public StaffPanel() {
-	    JButton b1 = new JButton("New York");
-	    add(b1);
-	  }
-	}
-class SuppliersPanel extends JPanel {
-
-	  public SuppliersPanel() {
-	    JButton b1 = new JButton("New York");
-	    add(b1);
-	  }
-	}
-class IngredientsPanel extends JPanel {
-
-	  public IngredientsPanel() {
-	    JButton b1 = new JButton("New York");
-	    add(b1);
-	  }
-	}
-class DishesPanel extends JPanel {
-
-	  public DishesPanel() {
-	    JButton b1 = new JButton("New York");
-	    add(b1);
-	  }
-	}
-class OrdersPanel extends JPanel {
-
-	  public OrdersPanel() {
-	    JButton b1 = new JButton("New York");
-	    add(b1);
-	  }
-	}
-class UserPanel extends JPanel {
-
-	  public UserPanel() {
-	    JButton b1 = new JButton("New York");
-	    add(b1);
-	  }
-	}
-
 
