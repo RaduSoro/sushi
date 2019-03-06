@@ -5,7 +5,7 @@ import javax.swing.JPanel;
 
 class IngredientsPanel extends JPanel {
 
-	  public IngredientsPanel() {
+	  public IngredientsPanel(ServerInterface server) {
 	    JButton b1 = new JButton("Add salt");
 	    add(b1);
 	  }

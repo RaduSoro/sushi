@@ -27,11 +27,11 @@ public class ServerWindow extends JFrame implements UpdateListener {
 		this.server = server;
 		this.setTitle(server.getRestaurantName() + " Server");
 		server.addUpdateListener(this);
-		initialization();
+		initialization(server);
 		
 	}
 	
-	public void initialization() {
+	public void initialization(ServerInterface server) {
 		//Display window
 				setSize(800,600);
 				setLocationRelativeTo(null);
@@ -40,14 +40,14 @@ public class ServerWindow extends JFrame implements UpdateListener {
 				//tab stuff
 				JTabbedPane tabs = new JTabbedPane();
 				tabs.setTabPlacement(JTabbedPane.LEFT);
-				tabs.addTab("Postcodes", new PostcodesPanel());
-			    tabs.addTab("Drones", new DronesPanel());
-			    tabs.addTab("Staff", new StaffPanel());
-			    tabs.addTab("Suppliers ", new SuppliersPanel());
-			    tabs.addTab("Ingredients", new IngredientsPanel());
-			    tabs.addTab("Dishes", new DishesPanel());
-			    tabs.addTab("Orders ", new OrdersPanel());
-			    tabs.addTab("Users ", new UserPanel());
+				tabs.addTab("Postcodes", new PostcodesPanel(server));
+			    tabs.addTab("Drones", new DronesPanel(server));
+			    tabs.addTab("Staff", new StaffPanel(server));
+			    tabs.addTab("Suppliers ", new SuppliersPanel(server));
+			    tabs.addTab("Ingredients", new IngredientsPanel(server));
+			    tabs.addTab("Dishes", new DishesPanel(server));
+			    tabs.addTab("Orders ", new OrdersPanel(server));
+			    tabs.addTab("Users ", new UserPanel(server));
 			    add(tabs);
 				setVisible(true);
 				

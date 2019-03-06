@@ -5,7 +5,7 @@ import javax.swing.JPanel;
 
 class OrdersPanel extends JPanel {
 
-	  public OrdersPanel() {
+	  public OrdersPanel(ServerInterface server) {
 	    JButton b1 = new JButton("It will be 1 hr late");
 	    add(b1);
 	  }

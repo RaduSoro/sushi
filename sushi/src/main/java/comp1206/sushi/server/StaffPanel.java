@@ -5,7 +5,7 @@ import javax.swing.JPanel;
 
 class StaffPanel extends JPanel {
 
-	  public StaffPanel() {
+	  public StaffPanel(ServerInterface server) {
 	    JButton b1 = new JButton("Underpaid students");
 	    add(b1);
 	  }
