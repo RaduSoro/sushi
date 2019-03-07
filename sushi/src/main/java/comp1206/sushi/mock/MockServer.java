@@ -33,15 +33,8 @@ public class MockServer implements ServerInterface {
 		Postcode postcode1 = addPostcode("SO17 1TJ");
 		Postcode postcode2 = addPostcode("SO17 1BX");
 		Postcode postcode3 = addPostcode("SO17 2NJ");
-		Postcode postcode4 = addPostcode("SO17 1TW");
-		Postcode postcode5 = addPostcode("SO17 2LB");
-		Postcode postco4de5 = addPostcode("SO17 2LB");
-		Postcode pos4tcode5 = addPostcode("SO17 2LB");
-		Postcode postc4od4e5 = addPostcode("SO17 2LB");
-		Postcode postc4ode5 = addPostcode("SO17 2LB");
-		Postcode postcod4e5 = addPostcode("SO17 2LB");
-		Postcode p5ostc4ode5 = addPostcode("SO17 2iB");
-		Postcode p5ostc774ode5 = addPostcode("SO17 2TB");
+
+
 		
 		Supplier supplier1 = addSupplier("Supplier 1",postcode1);
 		Supplier supplier2 = addSupplier("Supplier 2",postcode2);
@@ -55,6 +48,9 @@ public class MockServer implements ServerInterface {
 		Dish dish2 = addDish("Dish 2","Dish 2",2,1,10);
 		Dish dish3 = addDish("Dish 3","Dish 3",3,1,10);
 		
+		orders.add(new Order());
+		orders.add(new Order());
+		orders.add(new Order());
 		orders.add(new Order());
 
 		addIngredientToDish(dish1,ingredient1,1);

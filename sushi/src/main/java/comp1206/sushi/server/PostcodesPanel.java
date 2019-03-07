@@ -3,11 +3,14 @@ package comp1206.sushi.server;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Panel;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
 import comp1206.sushi.common.Postcode;
 import comp1206.sushi.server.ServerInterface.UnableToDeleteException;
 
@@ -18,13 +21,9 @@ class PostcodesPanel extends JPanel {
 		  postcodePanel.setLayout(new GridLayout(2,1,5,2));
 		  JButton submit = new JButton("Add postcode");
 		  JButton remove = new JButton("Remove postcode");
-
-		  
 		  JTextArea addPostcodeText = new JTextArea(1,25);
-		  JTextArea removePostcodeText = new JTextArea(1,25);
 		  
 		  setMaxLimit(addPostcodeText, 8);
-		  setMaxLimit(removePostcodeText, 8);
 		  
 		  Panel postcodeAddPanel = new Panel();
 		  postcodeAddPanel.setLayout(new GridLayout(3,1,0,2));
@@ -34,60 +33,79 @@ class PostcodesPanel extends JPanel {
 		  
 		  Panel postcodeRemovePanel = new Panel();
 		  postcodeRemovePanel.setLayout(new GridLayout(3,1,0,2));
-		  postcodeRemovePanel.add(new JLabel("Remove postcode:"));
-		  postcodeRemovePanel.add(removePostcodeText);
 		  postcodeRemovePanel.add(remove);
+		  remove.setToolTipText("Select post code from the list than click remove");
 		  
 		  Panel postcodeShowPanel = new Panel();
-		  postcodeShowPanel.setLayout(new GridLayout(1,2,0,2));
-		  JTextArea postalcodeList = new JTextArea();
-		  uptadeText(postalcodeList,server);
-		  postalcodeList.setLineWrap(true);
-		  postalcodeList.setEditable(true);
-		  JScrollPane listScroller = new JScrollPane(postalcodeList);
-		  listScroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		  listScroller.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		  postcodeShowPanel.add(listScroller);
-		  listScroller.setPreferredSize(new Dimension(90, 199));
-		  
+		  JList<Postcode> list = new JList<Postcode>();
+		  DefaultListModel<Postcode> model = new DefaultListModel();
+		  for(Postcode postcode : server.getPostcodes()) {
+			  model.addElement(postcode);
+		  }
+		  list.setModel(model);
+		  list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		  list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+	      JScrollPane listScroller = new JScrollPane(list);
+	      listScroller.setPreferredSize(new Dimension(80, 199));
+	      listScroller.setAlignmentX(LEFT_ALIGNMENT);
+	      add(listScroller);
+		  /**
+		   * Adds an @ActionListener to the submit @JButton
+		   * checks if the @String PO it's not null
+		   * and adds the post code. After that it
+		   * calls the @Method updateText
+		   */
 		  submit.addActionListener(buttonPressed -> {
 			  String PO = addPostcodeText.getText();
-			  addPostcodeText.setText("");
-			  server.addPostcode(PO);
-			  uptadeText(postalcodeList,server);
+			  	if(!PO.equals("")) {
+			  		addPostcodeText.setText("");
+			  		server.addPostcode(PO);
+			  		uptadeText(model, server);
+			  	}
 		  });
 		  
 		  remove.addActionListener(buttonPressed -> {
-			  String postalcode = removePostcodeText.getText();
-			  removePostcodeText.setText("");
-			  for(Postcode PO : server.getPostcodes()) {
-				  if(postalcode.equals(PO.toString())) {
-					  try {
-						server.removePostcode(PO);
-					} catch (UnableToDeleteException e) {
-						e.printStackTrace();
-					}
-					  break;
-				  }
-			  }
-			  uptadeText(postalcodeList,server);
-
+			  Postcode postalcode = list.getSelectedValue();
+			  try {
+					server.removePostcode(postalcode);
+				} catch (UnableToDeleteException e) {
+					e.printStackTrace();
+				}
+			  uptadeText(model, server);
 		  });
 		  
-		  setPreferredSize(new Dimension(400,400));
 		  postcodePanel.add(postcodeAddPanel);
 		  postcodePanel.add(postcodeRemovePanel);
 		  add(postcodePanel);
 		  add(postcodeShowPanel);
 	  }
-	  public void uptadeText(JTextArea box, ServerInterface server) {
-		  String aux = "";
-		  for(Postcode PO : server.getPostcodes()) {
-			  aux = aux +(PO.toString() + "\n");
-		  }
-		  box.setText(aux);
+	  
+	  /**
+	   * 
+	   * @param model the model it's updating
+	   * @param server instance
+	   * @Description
+	   * Clears the model than fetches the postcode list from the server and iterates
+	   * through it adding it to the model
+	   * @Example
+	   * uptadeText(model, server);
+	   */
+	  public void uptadeText(DefaultListModel<Postcode> model, ServerInterface server) {
+		  model.clear();
+		  for(Postcode postcode : server.getPostcodes()) {
+		    	model.addElement(postcode);
+		    }
 	  }
 	  
+	  /**
+	   * 
+	   * @param area the text field it's bounding the rule to
+	   * @param maxLength @Integer the maximum number of characters
+	   * @Description
+	   * Sets a bound of maxLength characters on the @JTextArea
+	   * @Example
+	   * uptadeText(myTextField, 8);
+	   */
 	  public void setMaxLimit(JTextArea area, int maxLength) {
 			area.setDocument(new JTextFieldLimit(maxLength));
 			area.setFocusTraversalKeysEnabled(true);
