@@ -1,158 +1,89 @@
 package comp1206.sushi.server;
 
-import comp1206.sushi.common.Postcode;
+
 import comp1206.sushi.common.Supplier;
-import comp1206.sushi.mock.MockServer;
-import comp1206.sushi.server.ServerInterface.UnableToDeleteException;
-
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.List;
-import java.util.*;
-
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.PlainDocument;
-import javax.swing.text.html.HTMLDocument.Iterator;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.*;
 
 class SuppliersPanel extends JPanel {
+
 	  public SuppliersPanel(ServerInterface server) {
-		  JTabbedPane tabs = new JTabbedPane();
-		  tabs.setTabPlacement(JTabbedPane.LEFT);
-		  tabs.addTab("Add Suplier", new AddSuplierPanel(server));
-		  tabs.addTab("Remove Suplier", new RemoveSuplierPanel(server));
-//		  tabs.addTab("Search For Suplier", new SearchPanel());
-		  
-		  add(tabs);
+			Panel suppliersPanel = new Panel();
+			suppliersPanel.setLayout(new BorderLayout());
 
-	  }
-	}
-class AddSuplierPanel extends JPanel {
-
-	  public AddSuplierPanel(ServerInterface server) {
-		  Panel supplierAddPanel = new Panel();
-		  supplierAddPanel.setLayout(new GridLayout(4,3,0,10));
-		  JButton submit = new JButton("Submit");
-		  
-		  JTextArea supplierNameText = new JTextArea(1,25);
-		  JTextArea supplierPostcodeText = new JTextArea(1,25);
-//		  JTextArea ingredientText = new JTextArea(1,25);
-		  
-		  setMaxLimit(supplierNameText, 20);
-		  setMaxLimit(supplierPostcodeText, 20);
-//		  setMaxLimit(ingredientText, 20);
-		
-		  
-		  supplierAddPanel.add(new JLabel("Name of the supplier:"));
-		  supplierAddPanel.add(supplierNameText);
-		  
-		  supplierAddPanel.add(new JLabel("Supplier postcode:"));
-		  supplierAddPanel.add(supplierPostcodeText);
-		  
-//		  supplierAddPanel.add(new JLabel("Ingredient Supplied"));
-//		  supplierAddPanel.add(ingredientText);
-		  
-		  //this button should call add supplier from the MockServer.java
-		  supplierAddPanel.add(submit);
-		  submit.addActionListener(buttonPressed -> {
-			  String supplierName = supplierNameText.getText();
-			  Postcode supplierPO = new Postcode(supplierPostcodeText.getText());
-			  supplierNameText.setText("");
-			  supplierPostcodeText.setText("");
-			  server.addSupplier(supplierName, supplierPO);
-			  for(Supplier lol : server.getSuppliers()) {
-			  }
-		  });
-		  submit.setLocation(400,400);
-		  setPreferredSize(new Dimension(600,600));
-		  add(supplierAddPanel);
-		  
-	  }
-	  public void setMaxLimit(JTextArea area, int maxLength) {
-			area.setDocument(new JTextFieldLimit(maxLength));
-			area.setFocusTraversalKeysEnabled(true);
-		 }
-	}
-
-class RemoveSuplierPanel extends JPanel {
-
-	  public RemoveSuplierPanel(ServerInterface server) {
-		  Panel supplierAddPanel = new Panel();
-		  supplierAddPanel.setLayout(new GridLayout(4,3,0,10));
-		  JButton submit = new JButton("Delete supplier");
-		  
-		  JTextArea supplierNameText = new JTextArea(1,25);
-		  JTextArea supplierPostcodeText = new JTextArea(1,25);
-
-		  supplierAddPanel.add(new JLabel("Name of the supplier:"));
-		  supplierAddPanel.add(supplierNameText);
-		  
-		  supplierAddPanel.add(new JLabel("Supplier postcode:"));
-		  supplierAddPanel.add(supplierPostcodeText);
-		  
-		  
-		  supplierAddPanel.add(submit);
-		  submit.addActionListener(buttonPressed -> {
-			  String supplierName = supplierNameText.getText();
-			  Postcode supplierPO = new Postcode(supplierPostcodeText.getText());
-			  supplierNameText.setText("");
-			  supplierPostcodeText.setText("");
-			  Supplier supplierToBeRemoved = new Supplier(supplierName,supplierPO);
-			  boolean found = false;
-
-			  
-			  List<Supplier> supplierList = server.getSuppliers();
-			  java.util.Iterator<Supplier> itr = supplierList.iterator();
-			  while(itr.hasNext()) {
-				  supplierToBeRemoved = (Supplier) itr.next();
-				  if(supplierToBeRemoved.getName().equals(supplierName)) {
-					  found=true;
-					  break;
-				  }
-			  }
-			  if(found) {
-				  try {
-					server.removeSupplier(supplierToBeRemoved);
-				} catch (UnableToDeleteException e) {
-					
-					e.printStackTrace();
+			DefaultTableModel suppliersTableModel = new DefaultTableModel(){
+				@Override
+				public boolean isCellEditable(int row, int column) {
+					return false;
 				}
-				  found = false;
-			  }
-			  for(Supplier supplier : server.getSuppliers()) {
-			  }
+			};
+			suppliersTableModel.addColumn("Supplier name");
+			suppliersTableModel.addColumn("Supplier postcode");
+			updateTable(suppliersTableModel,server);
+			JTable suppliersTable = new JTable(suppliersTableModel);
+			suppliersTable.setShowGrid(false);
+			suppliersTable.setIntercellSpacing(new Dimension(0, 0));
+			suppliersTable.setPreferredSize(new Dimension(400,400));
+			JScrollPane userScrollTable = new JScrollPane(suppliersTable);
 
-		  });
-		  setPreferredSize(new Dimension(600,600));
-		  add(supplierAddPanel);
-		  
-	  }
-	}
-/**
- * 
- * @author http://www.java2s.com/Tutorial/Java/0240__Swing/LimitJTextFieldinputtoamaximumlength.htm
- *
- */
-class JTextFieldLimit extends PlainDocument {
-	  private int limit;
-	  JTextFieldLimit(int limit) {
-	    super();
-	    this.limit = limit;
-	  }
 
-	  JTextFieldLimit(int limit, boolean upper) {
-	    super();
-	    this.limit = limit;
-	  }
+			//the list render panel
 
-	  public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
-	    if (str == null)
-	      return;
+			suppliersPanel.add(userScrollTable, BorderLayout.CENTER);
+			add(suppliersPanel);
 
-	    if ((getLength() + str.length()) <= limit) {
-	      super.insertString(offset, str, attr);
-	    }
-	  }
+		  	Panel supplierRemovePanel = new Panel();
+		  	supplierRemovePanel.setLayout(new FlowLayout());
+			JButton removeUserButton = new JButton("Remove supplier");
+			supplierRemovePanel.add(removeUserButton);
+//			suppliersPanel.add(supplierRemovePanel,BorderLayout.SOUTH);
+
+			Panel supplierAddPanel = new Panel();
+			supplierAddPanel.setLayout(new FlowLayout());
+			supplierAddPanel.add(new JLabel("Supplier name"));
+			JTextField supplierAddNameText = new JTextField(20);
+			supplierAddPanel.add(supplierAddNameText);
+			supplierAddPanel.add(new JLabel("Supplier postcode"));
+		  	JTextField supplierAddPostcodeText = new JTextField(20);
+		  	supplierAddPanel.add(supplierAddPostcodeText);
+		  	JButton addSupplierButton = new JButton("Submit");
+		  	supplierAddPanel.add(addSupplierButton);
+//		  	suppliersPanel.add(supplierAddPanel, BorderLayout.SOUTH);
+
+		  	Panel supplierControlPanel = new Panel();
+		  	supplierControlPanel.setLayout(new GridLayout(2,1,5,5));
+		  	supplierControlPanel.add(supplierRemovePanel);
+		  	supplierControlPanel.add(supplierAddPanel);
+		  	suppliersPanel.add(supplierControlPanel, BorderLayout.SOUTH);
+
+			//@ACTIONLISTENERS
+			removeUserButton.addActionListener(buttonPressed -> {
+				if(suppliersTable.getSelectedRow() !=-1) {
+					Supplier supplierToRemove = (Supplier) suppliersTableModel.getValueAt(suppliersTable.getSelectedRow(), 0);
+					try {
+						server.removeSupplier(supplierToRemove);
+					} catch (ServerInterface.UnableToDeleteException e) {
+						e.printStackTrace();
+					}
+					updateTable(suppliersTableModel,server);
+				}
+			});
+		}
+
+		/**
+		 *
+		 * @param tableModel the current table model that needs updating
+		 * @param server the current server Interface to fetch data from
+		 * @Description deletes the current data by setting the rowCount to 0
+		 * fetches new data from the server and puts it back in the model
+		 */
+		public void updateTable(DefaultTableModel tableModel, ServerInterface server) {
+			//clears the table
+			tableModel.setRowCount(0);
+			for(Supplier supplier : server.getSuppliers()) {
+				Object[] supplierRow = {supplier, supplier.getPostcode()};
+				tableModel.addRow(supplierRow);
+			}
+		}
 	}

@@ -5,6 +5,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.*;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 
 import comp1206.sushi.common.*;
 import comp1206.sushi.server.ServerInterface.UnableToDeleteException;
@@ -71,6 +74,7 @@ public class ServerWindow extends JFrame implements UpdateListener {
 	public void refreshAll() {
 		
 	}
+
 	
 	@Override
 	/**
@@ -80,5 +84,26 @@ public class ServerWindow extends JFrame implements UpdateListener {
 		refreshAll();
 	}
 	
+}
+class JTextFieldLimit extends PlainDocument {
+	private int limit;
+	JTextFieldLimit(int limit) {
+		super();
+		this.limit = limit;
+	}
+
+	JTextFieldLimit(int limit, boolean upper) {
+		super();
+		this.limit = limit;
+	}
+
+	public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
+		if (str == null)
+			return;
+
+		if ((getLength() + str.length()) <= limit) {
+			super.insertString(offset, str, attr);
+		}
+	}
 }
 

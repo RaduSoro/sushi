@@ -33,8 +33,6 @@ public class MockServer implements ServerInterface {
 		Postcode postcode1 = addPostcode("SO17 1TJ");
 		Postcode postcode2 = addPostcode("SO17 1BX");
 		Postcode postcode3 = addPostcode("SO17 2NJ");
-
-
 		
 		Supplier supplier1 = addSupplier("Supplier 1",postcode1);
 		Supplier supplier2 = addSupplier("Supplier 2",postcode2);
