@@ -1,43 +1,95 @@
 package comp1206.sushi.server;
 
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ListModel;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
+import comp1206.sushi.common.Ingredient;
 import comp1206.sushi.common.Order;
 
 class OrdersPanel extends JPanel {
 
 	public OrdersPanel(ServerInterface server) {
-		JList<Order> list = new JList<Order>();
-		DefaultListModel<Order> model = new DefaultListModel();
-		for (Order order : server.getOrders()) {
-			model.addElement(order);
-		}
-		list.setModel(model);
-		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-		list.setVisibleRowCount(-1);
-		list.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() == 1) {
-					System.out.println(list.getSelectedValue());
-					model.addElement(new Order());
-					model.removeElement(list.getSelectedValue());
+		Panel oredersPanel = new Panel();
+		oredersPanel.setLayout(new BorderLayout());
+
+		DefaultTableModel orderTableModel = new DefaultTableModel(){
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		orderTableModel.addColumn("Order name");
+		orderTableModel.addColumn("Order status");
+		orderTableModel.addColumn("Order cost");
+		updateTable(orderTableModel,server);
+		JTable orderTable = new JTable(orderTableModel);
+		orderTable.setShowGrid(false);
+		orderTable.setIntercellSpacing(new Dimension(0, 0));
+		orderTable.setPreferredSize(new Dimension(400,400));
+		JScrollPane orderScrollTable = new JScrollPane(orderTable);
+
+
+		//the list render panel
+
+		oredersPanel.add(orderScrollTable, BorderLayout.CENTER);
+		add(oredersPanel);
+
+		Panel orderRemovePanel = new Panel();
+		orderRemovePanel.setLayout(new FlowLayout());
+		JButton removeOrderButton = new JButton("Remove order");
+		orderRemovePanel.add(removeOrderButton);
+
+
+//		Panel ingredientAddPanel = new Panel();
+//		ingredientAddPanel.setLayout(new FlowLayout());
+		//TO DO
+//		  ingredientAddPanel.add(new JLabel("Ingredient name"));
+//		  JTextField supplierAddNameText = new JTextField(20);
+//		  ingredientAddPanel.add(supplierAddNameText);
+//		  ingredientAddPanel.add(new JLabel("Ingredient postcode"));
+//		  JTextField supplierAddPostcodeText = new JTextField(20);
+//		  ingredientAddPanel.add(supplierAddPostcodeText);
+//		  JButton ingredientAddButton = new JButton("Submit");
+//		  ingredientAddPanel.add(ingredientAddButton);
+
+
+		Panel orderControlPanel = new Panel();
+		orderControlPanel.setLayout(new GridLayout(2,1,5,5));
+		orderControlPanel.add(orderRemovePanel);
+		//ingredientControlPanel.add(ingredientAddPanel);
+		oredersPanel.add(orderControlPanel, BorderLayout.SOUTH);
+
+		//@ACTIONLISTENERS
+		removeOrderButton.addActionListener(buttonPressed -> {
+			if(orderTable.getSelectedRow() !=-1) {
+				Order orderToRemove = (Order) orderTableModel.getValueAt(orderTable.getSelectedRow(), 0);
+				try {
+					server.removeOrder(orderToRemove);
+				} catch (ServerInterface.UnableToDeleteException e) {
+					e.printStackTrace();
 				}
+				updateTable(orderTableModel,server);
 			}
 		});
-		JScrollPane listScroller = new JScrollPane(list);
-		listScroller.setPreferredSize(new Dimension(250, 80));
-		listScroller.setAlignmentX(LEFT_ALIGNMENT);
-		add(listScroller);
+	}
+
+	/**
+	 *
+	 * @param tableModel the current table model that needs updating
+	 * @param server the current server Interface to fetch data from
+	 * @Description deletes the current data by setting the rowCount to 0
+	 * fetches new data from the server and puts it back in the model
+	 */
+	public void updateTable(DefaultTableModel tableModel, ServerInterface server) {
+		//clears the table
+		tableModel.setRowCount(0);
+		for(Order order : server.getOrders()) {
+			Object[] ingredientRow = {order , server.getOrderStatus(order), server.getOrderCost(order)};
+			tableModel.addRow(ingredientRow);
+		}
 	}
 }

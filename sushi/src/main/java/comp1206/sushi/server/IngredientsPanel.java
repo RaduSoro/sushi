@@ -12,7 +12,6 @@ class IngredientsPanel extends JPanel {
 	  public IngredientsPanel(ServerInterface server) {
 		  Panel ingredientsPanel = new Panel();
 		  ingredientsPanel.setLayout(new BorderLayout());
-
 		  DefaultTableModel ingredientsTableModel = new DefaultTableModel(){
 			  @Override
 			  public boolean isCellEditable(int row, int column) {
@@ -31,36 +30,46 @@ class IngredientsPanel extends JPanel {
 		  ingredientsTable.setPreferredSize(new Dimension(400,400));
 		  JScrollPane ingredientsScrollTable = new JScrollPane(ingredientsTable);
 
-
+		  Panel ingredientRemovePanel = new Panel();
+		  ingredientRemovePanel.setLayout(new FlowLayout());
+		  JButton removeIngredientButton = new JButton("Remove ingredient");
+		  ingredientRemovePanel.add(removeIngredientButton);
 		  //the list render panel
 
 		  ingredientsPanel.add(ingredientsScrollTable, BorderLayout.CENTER);
-		  add(ingredientsPanel);
 
-		  Panel ingredientsRemovePanel = new Panel();
-		  ingredientsRemovePanel.setLayout(new FlowLayout());
-		  JButton removeIngredientButton = new JButton("Remove ingredient");
-		  ingredientsRemovePanel.add(removeIngredientButton);
+		  /**
+		   * first panel controls the Restock threshold.
+		   */
+		  Panel ingredientsRestockThresholdPanel = new Panel();
+		  ingredientsRestockThresholdPanel.setLayout(new FlowLayout());
+		  ingredientsRestockThresholdPanel.add(new JLabel("Restock threshold"));
+		  JTextField ingedientsThresholdText = new JTextField(5);
+		  ingredientsRestockThresholdPanel.add(ingedientsThresholdText);
+		  JButton ingredientTresholdButton = new JButton("Submit");
+		  ingredientsRestockThresholdPanel.add(ingredientTresholdButton);
 
-
-		  Panel ingredientAddPanel = new Panel();
-		  ingredientAddPanel.setLayout(new FlowLayout());
-		  ingredientAddPanel.add(new JLabel("Supplier name"));
-		  JTextField supplierAddNameText = new JTextField(20);
-		  ingredientAddPanel.add(supplierAddNameText);
-		  ingredientAddPanel.add(new JLabel("Supplier postcode"));
-		  JTextField supplierAddPostcodeText = new JTextField(20);
-		  ingredientAddPanel.add(supplierAddPostcodeText);
-		  JButton ingredientAddButton = new JButton("Submit");
-		  ingredientAddPanel.add(ingredientAddButton);
+		  /**
+		   * 2nd panel controls the restock ammount
+		   */
+		  Panel ingredientsRestockAmountPanel = new Panel();
+		  ingredientsRestockAmountPanel.setLayout(new FlowLayout());
+		  ingredientsRestockAmountPanel.add(new JLabel("Restock amount   "));
+		  JTextField ingredientsRestockAmmountText = new JTextField(5);
+		  ingredientsRestockAmountPanel.add(ingredientsRestockAmmountText);
+		  JButton ingredientRestockAmmountButton = new JButton("Submit");
+		  ingredientsRestockAmountPanel.add(ingredientRestockAmmountButton);
 
 
 		  Panel ingredientControlPanel = new Panel();
-		  ingredientControlPanel.setLayout(new GridLayout(2,1,5,5));
-		  ingredientControlPanel.add(ingredientsRemovePanel);
-		  ingredientControlPanel.add(ingredientAddPanel);
+		  ingredientControlPanel.setLayout(new GridLayout(3,1,5,5));
+
+		  ingredientControlPanel.add(ingredientsRestockAmountPanel);
+		  ingredientControlPanel.add(ingredientsRestockThresholdPanel);
+		  ingredientControlPanel.add(ingredientRemovePanel);
 		  ingredientsPanel.add(ingredientControlPanel, BorderLayout.SOUTH);
 
+		  add(ingredientsPanel);
 		  //@ACTIONLISTENERS
 		  removeIngredientButton.addActionListener(buttonPressed -> {
 			  if(ingredientsTable.getSelectedRow() !=-1) {

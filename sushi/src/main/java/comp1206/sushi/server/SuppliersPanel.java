@@ -37,7 +37,7 @@ class SuppliersPanel extends JPanel {
 		  	supplierRemovePanel.setLayout(new FlowLayout());
 			JButton removeUserButton = new JButton("Remove supplier");
 			supplierRemovePanel.add(removeUserButton);
-//			suppliersPanel.add(supplierRemovePanel,BorderLayout.SOUTH);
+
 
 			Panel supplierAddPanel = new Panel();
 			supplierAddPanel.setLayout(new FlowLayout());
@@ -47,14 +47,13 @@ class SuppliersPanel extends JPanel {
 			supplierAddPanel.add(new JLabel("Supplier postcode"));
 		  	JTextField supplierAddPostcodeText = new JTextField(20);
 		  	supplierAddPanel.add(supplierAddPostcodeText);
-		  	JButton addSupplierButton = new JButton("Submit");
+		  	JButton addSupplierButton = new JButton("Add supplier");
 		  	supplierAddPanel.add(addSupplierButton);
-//		  	suppliersPanel.add(supplierAddPanel, BorderLayout.SOUTH);
 
 		  	Panel supplierControlPanel = new Panel();
 		  	supplierControlPanel.setLayout(new GridLayout(2,1,5,5));
-		  	supplierControlPanel.add(supplierRemovePanel);
 		  	supplierControlPanel.add(supplierAddPanel);
+		  	supplierControlPanel.add(supplierRemovePanel);
 		  	suppliersPanel.add(supplierControlPanel, BorderLayout.SOUTH);
 
 			//@ACTIONLISTENERS
