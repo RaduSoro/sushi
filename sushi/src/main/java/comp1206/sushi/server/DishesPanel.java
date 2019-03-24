@@ -8,8 +8,17 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 class DishesPanel extends JPanel {
+	public DishesPanel(ServerInterface server) {
+		JTabbedPane dishTabs = new JTabbedPane();
+		dishTabs.setTabPlacement(JTabbedPane.LEFT);
+		dishTabs.addTab("Dish control", new DishControl(server));
+		dishTabs.addTab("Dish adding", new DishAdd(server));
+		add(dishTabs);
+	}
+}
 
-	  public DishesPanel(ServerInterface server) {
+class DishControl extends JPanel {
+	public DishControl(ServerInterface server) {
 		  Panel dishPanel = new Panel();
 		  dishPanel.setLayout(new BorderLayout());
 		  DefaultTableModel dishTableModel = new DefaultTableModel(){
@@ -72,10 +81,36 @@ class DishesPanel extends JPanel {
 		  dishControlPanel.add(dishRemovePanel);
 		  dishPanel.add(dishControlPanel, BorderLayout.SOUTH);
 
-
 		  add(dishPanel);
-
+		setPreferredSize(new Dimension(600, 600));
 		  //@ACTIONLISTENERS
+
+		dishRestockAmmountButton.addActionListener(buttonPressed -> {
+			if (!(dishRestockAmmountText.getText().equals("")) && dishTable.getSelectedRow() != -1) {
+				try {
+					Dish dish = (Dish) dishTableModel.getValueAt(dishTable.getSelectedRow(), 0);
+					dish.setRestockAmount(Integer.valueOf(dishRestockAmmountText.getText()));
+					dishRestockAmmountText.setText(null);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				updateTable(dishTableModel, server);
+			}
+		});
+
+		dishTresholdButton.addActionListener(buttonPressed -> {
+			if (!(dishThresholdText.getText().equals("")) && dishTable.getSelectedRow() != -1) {
+				try {
+					Dish dish = (Dish) dishTableModel.getValueAt(dishTable.getSelectedRow(), 0);
+					dish.setRestockThreshold(Integer.valueOf(dishThresholdText.getText()));
+					dishThresholdText.setText(null);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				updateTable(dishTableModel, server);
+			}
+		});
+
 		  removeDishButton.addActionListener(buttonPressed -> {
 			  if(dishTable.getSelectedRow() !=-1) {
 				  Dish dishToRemove = (Dish) dishTableModel.getValueAt(dishTable.getSelectedRow(), 0);
@@ -102,6 +137,83 @@ class DishesPanel extends JPanel {
 		for(Dish dish : server.getDishes()) {
 			Object[] ingredientRow = {dish , dish.getPrice(), dish.getRestockThreshold(), dish.getRestockAmount()};
 			tableModel.addRow(ingredientRow);
+		}
+	}
+}
+
+class DishAdd extends JPanel {
+	public DishAdd(ServerInterface server) {
+		Panel mainPanel = new Panel();
+		mainPanel.setLayout(new BorderLayout(10, 10));
+
+		Panel configPanel = new Panel();
+		configPanel.setLayout(new GridLayout(3, 1, 5, 5));
+		configPanel.setSize(new Dimension(300, 300));
+
+		Panel dishAddPanel = new Panel();
+		dishAddPanel.setLayout(new GridLayout(5, 2, 5, 5));
+
+		JTextField dishNameText = new JTextField(15);
+		JTextField dishDescriptionText = new JTextField(15);
+		JTextField dishPriceText = new JTextField(15);
+		JTextField restockThresholdText = new JTextField(15);
+		JTextField restockText = new JTextField(15);
+
+		dishAddPanel.add(new JLabel("Dish name: "));
+		dishAddPanel.add(dishNameText);
+		dishAddPanel.add(new JLabel("Dish description: "));
+		dishAddPanel.add(dishDescriptionText);
+		dishAddPanel.add(new JLabel("Dish price: "));
+		dishAddPanel.add(dishPriceText);
+		dishAddPanel.add(new JLabel("Restock threshold: "));
+		dishAddPanel.add(restockThresholdText);
+		dishAddPanel.add(new JLabel("Restock ammount: "));
+		dishAddPanel.add(restockText);
+
+		Panel dishConfigCellOne = new Panel();
+		dishConfigCellOne.setLayout(new GridLayout(2, 1, 5, 5));
+		dishConfigCellOne.add(dishAddPanel);
+		Panel submitButtonPanel = new Panel();
+		JButton newDishButton = new JButton("Submit");
+		submitButtonPanel.add(newDishButton);
+		dishConfigCellOne.add(submitButtonPanel);
+		configPanel.add(dishConfigCellOne);
+
+		Panel dishConfigCellTwo = new Panel();
+		dishConfigCellTwo.setLayout(new GridLayout(2, 1, 5, 5));
+		Panel modifyRecipe = new Panel();
+		JComboBox<Ingredient> ingredientList = new JComboBox<Ingredient>();
+		ingredientPopulate(server, ingredientList);
+		JLabel instrucitons = new JLabel("If quantity is 0 it will reomve the ingredient otherwise it will add it");
+		JComboBox<Dish> dishList = new JComboBox<Dish>();
+		dishListPopulate(server, dishList);
+		JTextField ingredientQuantity = new JTextField(4);
+		JButton changeRecipe = new JButton("Chang recipe");
+
+		modifyRecipe.add(ingredientList);
+		modifyRecipe.add(dishList);
+		modifyRecipe.add(ingredientQuantity);
+		modifyRecipe.add(changeRecipe);
+
+		dishConfigCellTwo.add(instrucitons);
+		dishConfigCellTwo.add(modifyRecipe);
+		configPanel.add(dishConfigCellTwo);
+		//
+		mainPanel.add(configPanel, BorderLayout.CENTER);
+		add(mainPanel);
+	}
+
+	private void dishListPopulate(ServerInterface server, JComboBox box) {
+		box.removeAllItems();
+		for (Dish dish : server.getDishes()) {
+			box.addItem(dish);
+		}
+	}
+
+	private void ingredientPopulate(ServerInterface server, JComboBox box) {
+		box.removeAllItems();
+		for (Ingredient ingredient : server.getIngredients()) {
+			box.addItem(ingredient);
 		}
 	}
 }
