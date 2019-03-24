@@ -5,6 +5,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.*;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 
 import comp1206.sushi.common.*;
 import comp1206.sushi.server.ServerInterface.UnableToDeleteException;
@@ -27,28 +30,28 @@ public class ServerWindow extends JFrame implements UpdateListener {
 		this.server = server;
 		this.setTitle(server.getRestaurantName() + " Server");
 		server.addUpdateListener(this);
-		initialization();
+		initialization(server);
 		
 	}
 	
-	public void initialization() {
+	public void initialization(ServerInterface server) {
 		//Display window
 				setSize(800,600);
 				setLocationRelativeTo(null);
 				setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				JTabbedPane jtp = new JTabbedPane();
-				
-				jtp.setTabPlacement(JTabbedPane.LEFT);
-				jtp.addTab("Postcodes", new PostcodesPanel());
-			    jtp.addTab("Drones", new DronesPanel());
-			    //this is a test
-			    jtp.addTab("Staff", new StaffPanel());
-			    jtp.addTab("Suppliers ", new SuppliersPanel());
-			    jtp.addTab("Ingredients", new IngredientsPanel());
-			    jtp.addTab("Dishes", new DishesPanel());
-			    jtp.addTab("Orders ", new OrdersPanel());
-			    jtp.addTab("Users ", new UserPanel());
-			    add(jtp);
+
+				//tab stuff
+				JTabbedPane tabs = new JTabbedPane();
+				tabs.setTabPlacement(JTabbedPane.LEFT);
+				tabs.addTab("Postcodes", new PostcodesPanel(server));
+			    tabs.addTab("Drones", new DronesPanel(server));
+			    tabs.addTab("Staff", new StaffPanel(server));
+			    tabs.addTab("Suppliers ", new SuppliersPanel(server));
+			    tabs.addTab("Ingredients", new IngredientsPanel(server));
+			    tabs.addTab("Dishes", new DishesPanel(server));
+			    tabs.addTab("Orders ", new OrdersPanel(server));
+			    tabs.addTab("Users ", new UserPanel(server));
+			    add(tabs);
 				setVisible(true);
 				
 				//Start timed updates
@@ -71,6 +74,7 @@ public class ServerWindow extends JFrame implements UpdateListener {
 	public void refreshAll() {
 		
 	}
+
 	
 	@Override
 	/**
@@ -81,62 +85,25 @@ public class ServerWindow extends JFrame implements UpdateListener {
 	}
 	
 }
-class PostcodesPanel extends JPanel {
-
-	  public PostcodesPanel() {
-	    JButton b1 = new JButton("New York");
-	    add(b1);
-	  }
-	}
-class DronesPanel  extends JPanel {
-
-	  public DronesPanel () {
-	    JButton b1 = new JButton("New York");
-	    add(b1);
-	  }
+class JTextFieldLimit extends PlainDocument {
+	private int limit;
+	JTextFieldLimit(int limit) {
+		super();
+		this.limit = limit;
 	}
 
-class StaffPanel extends JPanel {
-
-	  public StaffPanel() {
-	    JButton b1 = new JButton("New York");
-	    add(b1);
-	  }
-	}
-class SuppliersPanel extends JPanel {
-
-	  public SuppliersPanel() {
-	    JButton b1 = new JButton("New York");
-	    add(b1);
-	  }
-	}
-class IngredientsPanel extends JPanel {
-
-	  public IngredientsPanel() {
-	    JButton b1 = new JButton("New York");
-	    add(b1);
-	  }
-	}
-class DishesPanel extends JPanel {
-
-	  public DishesPanel() {
-	    JButton b1 = new JButton("New York");
-	    add(b1);
-	  }
-	}
-class OrdersPanel extends JPanel {
-
-	  public OrdersPanel() {
-	    JButton b1 = new JButton("New York");
-	    add(b1);
-	  }
-	}
-class UserPanel extends JPanel {
-
-	  public UserPanel() {
-	    JButton b1 = new JButton("New York");
-	    add(b1);
-	  }
+	JTextFieldLimit(int limit, boolean upper) {
+		super();
+		this.limit = limit;
 	}
 
+	public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
+		if (str == null)
+			return;
+
+		if ((getLength() + str.length()) <= limit) {
+			super.insertString(offset, str, attr);
+		}
+	}
+}
 

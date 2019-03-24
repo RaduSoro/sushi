@@ -33,8 +33,6 @@ public class MockServer implements ServerInterface {
 		Postcode postcode1 = addPostcode("SO17 1TJ");
 		Postcode postcode2 = addPostcode("SO17 1BX");
 		Postcode postcode3 = addPostcode("SO17 2NJ");
-		Postcode postcode4 = addPostcode("SO17 1TW");
-		Postcode postcode5 = addPostcode("SO17 2LB");
 		
 		Supplier supplier1 = addSupplier("Supplier 1",postcode1);
 		Supplier supplier2 = addSupplier("Supplier 2",postcode2);
@@ -48,6 +46,9 @@ public class MockServer implements ServerInterface {
 		Dish dish2 = addDish("Dish 2","Dish 2",2,1,10);
 		Dish dish3 = addDish("Dish 3","Dish 3",3,1,10);
 		
+		orders.add(new Order());
+		orders.add(new Order());
+		orders.add(new Order());
 		orders.add(new Order());
 
 		addIngredientToDish(dish1,ingredient1,1);
@@ -152,7 +153,9 @@ public class MockServer implements ServerInterface {
 
 	@Override
 	public void removeSupplier(Supplier supplier) {
+		System.out.println(supplier);
 		int index = this.suppliers.indexOf(supplier);
+		
 		this.suppliers.remove(index);
 		this.notifyUpdate();
 	}
