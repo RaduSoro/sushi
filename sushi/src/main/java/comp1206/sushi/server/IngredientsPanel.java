@@ -36,7 +36,6 @@ class IngredientsControl extends JPanel {
 		  updateTable(ingredientsTableModel,server);
 		  JTable ingredientsTable = new JTable(ingredientsTableModel);
 		  ingredientsTable.setShowGrid(false);
-		  ingredientsTable.setIntercellSpacing(new Dimension(0, 0));
 		  ingredientsTable.setPreferredSize(new Dimension(400,400));
 		  JScrollPane ingredientsScrollTable = new JScrollPane(ingredientsTable);
 

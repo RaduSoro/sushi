@@ -34,7 +34,6 @@ class SuppliersPanel extends JPanel {
 
 			suppliersPanel.add(userScrollTable, BorderLayout.CENTER);
 			add(suppliersPanel);
-
 		  	Panel supplierRemovePanel = new Panel();
 		  	supplierRemovePanel.setLayout(new FlowLayout());
 			JButton removeUserButton = new JButton("Remove supplier");

@@ -6,6 +6,8 @@ import comp1206.sushi.common.Ingredient;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.Iterator;
+import java.util.Map;
 
 class DishesPanel extends JPanel {
 	public DishesPanel(ServerInterface server) {
@@ -13,6 +15,7 @@ class DishesPanel extends JPanel {
 		dishTabs.setTabPlacement(JTabbedPane.LEFT);
 		dishTabs.addTab("Dish control", new DishControl(server));
 		dishTabs.addTab("Dish adding", new DishAdd(server));
+		dishTabs.addTab("Dish recipe", new DishRecipe(server));
 		add(dishTabs);
 	}
 }
@@ -188,7 +191,8 @@ class DishAdd extends JPanel {
 		JComboBox<Dish> dishList = new JComboBox<Dish>();
 		dishListPopulate(server, dishList);
 		JTextField ingredientQuantity = new JTextField(4);
-		JButton changeRecipe = new JButton("Chang recipe");
+		JButton changeRecipe = new JButton("Change recipe");
+
 
 		modifyRecipe.add(ingredientList);
 		modifyRecipe.add(dishList);
@@ -214,6 +218,56 @@ class DishAdd extends JPanel {
 		box.removeAllItems();
 		for (Ingredient ingredient : server.getIngredients()) {
 			box.addItem(ingredient);
+		}
+	}
+
+}
+
+class DishRecipe extends JPanel {
+	public DishRecipe(ServerInterface server) {
+		JComboBox<Dish> dishList = new JComboBox<Dish>();
+		dishListPopulate(server, dishList);
+
+		Panel dishConfigCellThree = new Panel();
+		dishConfigCellThree.setLayout(new BorderLayout(5, 5));
+		DefaultTableModel recipeTableModel = new DefaultTableModel() {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		recipeTableModel.addColumn("Ingredient name");
+		recipeTableModel.addColumn("Quantity");
+		JTable recipeTable = new JTable(recipeTableModel);
+		recipeTable.setShowGrid(false);
+
+		JScrollPane recipeTableScroll = new JScrollPane(recipeTable);
+		dishConfigCellThree.add(recipeTableScroll, BorderLayout.CENTER);
+		dishConfigCellThree.add(dishList, BorderLayout.SOUTH);
+		add(dishConfigCellThree);
+
+		dishList.addActionListener(actionPerformed -> {
+			updateTable(recipeTableModel, server, dishList);
+		});
+	}
+
+	public void updateTable(DefaultTableModel tableModel, ServerInterface server, JComboBox dishList) {
+		//clears the table
+		tableModel.setRowCount(0);
+		Dish dish = (Dish) dishList.getSelectedItem();
+		Map<Ingredient, Number> map = server.getRecipe(dish);
+		Iterator it = map.keySet().iterator();
+		while (it.hasNext()) {
+			Ingredient ingredient = (Ingredient) it.next();
+			Object[] recipeRow = {ingredient, map.get(ingredient)};
+			tableModel.addRow(recipeRow);
+		}
+	}
+
+	private void dishListPopulate(ServerInterface server, JComboBox box) {
+		box.removeAllItems();
+		for (Dish dish : server.getDishes()) {
+			box.addItem(dish);
 		}
 	}
 }

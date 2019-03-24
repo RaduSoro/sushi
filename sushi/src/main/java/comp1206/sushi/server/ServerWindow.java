@@ -1,16 +1,15 @@
 package comp1206.sushi.server;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import comp1206.sushi.common.UpdateEvent;
+import comp1206.sushi.common.UpdateListener;
 
 import javax.swing.*;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
-
-import comp1206.sushi.common.*;
-import comp1206.sushi.server.ServerInterface.UnableToDeleteException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Provides the Sushi Server user interface
