@@ -1,10 +1,12 @@
 package comp1206.sushi.server;
 
 
+import comp1206.sushi.common.Postcode;
 import comp1206.sushi.common.Supplier;
-import java.awt.*;
-import javax.swing.table.DefaultTableModel;
+
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 
 class SuppliersPanel extends JPanel {
 
@@ -45,8 +47,10 @@ class SuppliersPanel extends JPanel {
 			JTextField supplierAddNameText = new JTextField(20);
 			supplierAddPanel.add(supplierAddNameText);
 			supplierAddPanel.add(new JLabel("Supplier postcode"));
-		  	JTextField supplierAddPostcodeText = new JTextField(20);
-		  	supplierAddPanel.add(supplierAddPostcodeText);
+
+		  JComboBox<Postcode> postcodeDropBox = new JComboBox<Postcode>();
+		  postcodePopulate(server, postcodeDropBox);
+		  supplierAddPanel.add(postcodeDropBox);
 		  	JButton addSupplierButton = new JButton("Add supplier");
 		  	supplierAddPanel.add(addSupplierButton);
 
@@ -57,6 +61,16 @@ class SuppliersPanel extends JPanel {
 		  	suppliersPanel.add(supplierControlPanel, BorderLayout.SOUTH);
 
 			//@ACTIONLISTENERS
+
+		  addSupplierButton.addActionListener(buttonPressed -> {
+			  if (!(supplierAddNameText.getText().equals(""))) {
+				  server.addSupplier(supplierAddNameText.getText(), (Postcode) postcodeDropBox.getSelectedItem());
+				  supplierAddNameText.setText("");
+				  postcodePopulate(server, postcodeDropBox);
+				  updateTable(suppliersTableModel, server);
+			  }
+		  });
+
 			removeUserButton.addActionListener(buttonPressed -> {
 				if(suppliersTable.getSelectedRow() !=-1) {
 					Supplier supplierToRemove = (Supplier) suppliersTableModel.getValueAt(suppliersTable.getSelectedRow(), 0);
@@ -70,6 +84,12 @@ class SuppliersPanel extends JPanel {
 			});
 		}
 
+	private void postcodePopulate(ServerInterface server, JComboBox box) {
+		box.removeAllItems();
+		for (Postcode postcode : server.getPostcodes()) {
+			box.addItem(postcode);
+		}
+	}
 		/**
 		 *
 		 * @param tableModel the current table model that needs updating

@@ -8,8 +8,18 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 class IngredientsPanel extends JPanel {
+	public IngredientsPanel(ServerInterface server) {
+		JTabbedPane ingredientTabs = new JTabbedPane();
+		ingredientTabs.setTabPlacement(JTabbedPane.LEFT);
+		ingredientTabs.addTab("Ingredient control", new IngredientsControl(server));
+		ingredientTabs.addTab("Ingredient adding", new IngredientAdd(server));
+		add(ingredientTabs);
+	}
 
-	  public IngredientsPanel(ServerInterface server) {
+}
+
+class IngredientsControl extends JPanel {
+	public IngredientsControl(ServerInterface server) {
 		  Panel ingredientsPanel = new Panel();
 		  ingredientsPanel.setLayout(new BorderLayout());
 		  DefaultTableModel ingredientsTableModel = new DefaultTableModel(){
@@ -68,8 +78,9 @@ class IngredientsPanel extends JPanel {
 		  ingredientControlPanel.add(ingredientsRestockThresholdPanel);
 		  ingredientControlPanel.add(ingredientRemovePanel);
 		  ingredientsPanel.add(ingredientControlPanel, BorderLayout.SOUTH);
-
+		setPreferredSize(new Dimension(600, 600));
 		  add(ingredientsPanel);
+
 		  //@ACTIONLISTENERS
 		  removeIngredientButton.addActionListener(buttonPressed -> {
 			  if(ingredientsTable.getSelectedRow() !=-1) {
@@ -97,6 +108,46 @@ class IngredientsPanel extends JPanel {
 		for(Ingredient ingredient : server.getIngredients()) {
 			Object[] ingredientRow = {ingredient , ingredient.getUnit(), ingredient.getSupplier(), ingredient.getRestockThreshold(), ingredient.getRestockAmount()};
 			tableModel.addRow(ingredientRow);
+		}
+	}
+}
+
+class IngredientAdd extends JPanel {
+	public IngredientAdd(ServerInterface server) {
+		Panel addIngredientPanel = new Panel();
+		addIngredientPanel.setLayout(new GridLayout(6, 2, 5, 5));
+		JTextField ingredientNameText = new JTextField(15);
+		String[] unitCombos = {"grams", "ounces"};
+		JComboBox<String> unitDropDown = new JComboBox<String>(unitCombos);
+		JComboBox<Supplier> supplierDropDown = new JComboBox<Supplier>();
+		supplierPopulate(server, supplierDropDown);
+		JTextField ingredientRestockAmount = new JTextField(4);
+		JTextField ingredientRestockThreshold = new JTextField(4);
+
+		//adding to the panel
+		addIngredientPanel.add(new JLabel("Ingredient name: "));
+		addIngredientPanel.add(ingredientNameText);
+		addIngredientPanel.add(new JLabel("Unit: "));
+		addIngredientPanel.add(unitDropDown);
+		addIngredientPanel.add(new JLabel("Supplier: "));
+		addIngredientPanel.add(supplierDropDown);
+		addIngredientPanel.add(new JLabel("Restock threshold: "));
+		addIngredientPanel.add(ingredientRestockThreshold);
+		addIngredientPanel.add(new JLabel("Restock amount: "));
+		addIngredientPanel.add(ingredientRestockAmount);
+		Panel submitPanel = new Panel();
+		JButton submitButton = new JButton("Submit");
+		submitPanel.add(submitButton);
+		addIngredientPanel.add(submitPanel);
+		add(addIngredientPanel);
+
+
+	}
+
+	private void supplierPopulate(ServerInterface server, JComboBox box) {
+		box.removeAllItems();
+		for (Supplier supplier : server.getSuppliers()) {
+			box.addItem(supplier);
 		}
 	}
 }

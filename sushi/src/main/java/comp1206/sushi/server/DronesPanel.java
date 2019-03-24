@@ -1,33 +1,11 @@
 package comp1206.sushi.server;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.Panel;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-
 import comp1206.sushi.common.Drone;
-import comp1206.sushi.common.Postcode;
-import comp1206.sushi.common.Staff;
-import comp1206.sushi.common.Supplier;
 import comp1206.sushi.server.ServerInterface.UnableToDeleteException;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 
 class DronesPanel  extends JPanel {
 
@@ -52,7 +30,7 @@ class DroneControl extends JPanel{
 		  Panel configPanel = new Panel();
 		  configPanel.setLayout(new FlowLayout());
 		  configPanel.add(new JLabel("Modify speed: "));
-		  JTextArea droneSpeedText = new JTextArea(1,15);
+		JTextField droneSpeedText = new JTextField(15);
 		  configPanel.add(droneSpeedText);
 		  JButton droneSpeedButton = new JButton("Submit");
 		  configPanel.add(droneSpeedButton);
@@ -61,7 +39,7 @@ class DroneControl extends JPanel{
 		  Panel addDronePanel = new Panel();
 		  addDronePanel.setLayout(new FlowLayout());
 		  addDronePanel.add(new JLabel("     Add drone: "));
-		  JTextArea droneAddText = new JTextArea(1,15);
+		JTextField droneAddText = new JTextField(15);
 		  addDronePanel.add(droneAddText);
 		  JButton droneAddButton = new JButton("Submit");
 		  addDronePanel.add(droneAddButton);
@@ -127,7 +105,7 @@ class DroneControl extends JPanel{
 			  //makes sure that there is text and a drone selected
 			  if(!(droneAddText.getText().equals(""))) {
 				  try {
-				  server.addDrone((Number)Integer.valueOf(droneAddText.getText()));
+					  server.addDrone(Integer.valueOf(droneAddText.getText()));
 				  droneAddText.setText(null);
 				  } catch (Exception e) {
 						e.printStackTrace();
@@ -140,7 +118,7 @@ class DroneControl extends JPanel{
 			  if(droneSpeedText.getText()!=null && droneTable.getSelectedRow() !=-1) {
 				  try {
 					  Drone drone = (Drone)droneTableModel.getValueAt(droneTable.getSelectedRow(), 0);
-					  drone.setSpeed((Number)Integer.valueOf(droneSpeedText.getText()));
+					  drone.setSpeed(Integer.valueOf(droneSpeedText.getText()));
 					  droneSpeedText.setText(null);
 				  } catch (Exception e) {
 						e.printStackTrace();

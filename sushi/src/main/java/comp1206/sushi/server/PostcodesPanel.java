@@ -13,9 +13,8 @@ class PostcodesPanel extends JPanel {
         postcodePanel.setLayout(new GridLayout(2, 1, 5, 2));
         JButton submit = new JButton("Add postcode");
         JButton remove = new JButton("Remove postcode");
-        JTextArea addPostcodeText = new JTextArea(1, 25);
+        JTextField addPostcodeText = new JTextField(25);
 
-        setMaxLimit(addPostcodeText, 8);
 
         Panel postcodeAddPanel = new Panel();
         postcodeAddPanel.setLayout(new GridLayout(3, 1, 0, 2));
@@ -84,14 +83,4 @@ class PostcodesPanel extends JPanel {
         }
     }
 
-    /**
-     * @param area      the text field it's bounding the rule to
-     * @param maxLength @Integer the maximum number of characters
-     * @Description Sets a bound of maxLength characters on the @JTextArea
-     * @Example uptadeText(myTextField, 8);
-     */
-    public void setMaxLimit(JTextArea area, int maxLength) {
-        area.setDocument(new JTextFieldLimit(maxLength));
-        area.setFocusTraversalKeysEnabled(true);
-    }
 }

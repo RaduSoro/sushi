@@ -1,22 +1,10 @@
 package comp1206.sushi.server;
 
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Panel;
-import java.util.concurrent.TimeUnit;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.ListSelectionModel;
-
-import comp1206.sushi.common.Postcode;
 import comp1206.sushi.common.Staff;
 import comp1206.sushi.server.ServerInterface.UnableToDeleteException;
+
+import javax.swing.*;
+import java.awt.*;
 
 class StaffPanel extends JPanel {
 
@@ -27,14 +15,11 @@ class StaffPanel extends JPanel {
 		  JButton remove = new JButton("Remove staff");
 		  JButton status = new JButton("Get staff status");
 
-		  
-		  JTextArea addStaffText = new JTextArea(1,25);
-		  JTextArea staffStatus = new JTextArea(1,25);
+
+		  JTextField addStaffText = new JTextField(25);
+		  JTextField staffStatus = new JTextField(25);
 		  staffStatus.setEditable(false);
-		  
-		  setMaxLimit(addStaffText, 8);
-		  setMaxLimit(staffStatus, 8);
-		  
+
 		  Panel staffAddPanel = new Panel();
 		  staffAddPanel.setLayout(new GridLayout(3,1,0,2));
 		  staffAddPanel.add(new JLabel("Add staff :"));
@@ -105,17 +90,5 @@ class StaffPanel extends JPanel {
 			for (Staff staff : server.getStaff()) {
 				model.addElement(staff);
 			}
-		}
-
-		/**
-		 * 
-		 * @param area      the text field it's bounding the rule to
-		 * @param maxLength @Integer the maximum number of characters
-		 * @Description Sets a bound of maxLength characters on the @JTextArea
-		 * @Example uptadeText(myTextField, 8);
-		 */
-		public void setMaxLimit(JTextArea area, int maxLength) {
-			area.setDocument(new JTextFieldLimit(maxLength));
-			area.setFocusTraversalKeysEnabled(true);
 		}
 	}
