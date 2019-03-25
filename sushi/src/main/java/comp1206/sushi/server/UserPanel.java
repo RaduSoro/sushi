@@ -1,12 +1,10 @@
 package comp1206.sushi.server;
 
+import comp1206.sushi.common.User;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-
-import comp1206.sushi.common.Drone;
-import comp1206.sushi.common.User;
-import comp1206.sushi.common.Postcode;
 
 class UserPanel extends JPanel {
 
@@ -25,7 +23,6 @@ class UserPanel extends JPanel {
 		  updateTable(userTableModel,server);
 		  JTable userTable = new JTable(userTableModel);
 		  userTable.setShowGrid(false);
-		  userTable.setIntercellSpacing(new Dimension(0, 0));
 		  userTable.setPreferredSize(new Dimension(400,400));
 		  JScrollPane userScrollTable = new JScrollPane(userTable);
 

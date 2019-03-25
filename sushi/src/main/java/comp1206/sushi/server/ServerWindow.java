@@ -4,9 +4,6 @@ import comp1206.sushi.common.UpdateEvent;
 import comp1206.sushi.common.UpdateListener;
 
 import javax.swing.*;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.PlainDocument;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -42,14 +39,20 @@ public class ServerWindow extends JFrame implements UpdateListener {
 				//tab stuff
 				JTabbedPane tabs = new JTabbedPane();
 				tabs.setTabPlacement(JTabbedPane.LEFT);
+		SuppliersPanel supplierPanel = new SuppliersPanel(server);
 				tabs.addTab("Postcodes", new PostcodesPanel(server));
 			    tabs.addTab("Drones", new DronesPanel(server));
 			    tabs.addTab("Staff", new StaffPanel(server));
-			    tabs.addTab("Suppliers ", new SuppliersPanel(server));
+		tabs.addTab("Suppliers ", supplierPanel);
 			    tabs.addTab("Ingredients", new IngredientsPanel(server));
 			    tabs.addTab("Dishes", new DishesPanel(server));
 			    tabs.addTab("Orders ", new OrdersPanel(server));
 			    tabs.addTab("Users ", new UserPanel(server));
+		tabs.addChangeListener(ChangeListener -> {
+			if (tabs.getSelectedIndex() == 3) {
+				supplierPanel.postcodePopulate(server, supplierPanel.postcodeDropBox);
+			}
+		});
 			    add(tabs);
 				setVisible(true);
 				
@@ -84,25 +87,5 @@ public class ServerWindow extends JFrame implements UpdateListener {
 	}
 	
 }
-class JTextFieldLimit extends PlainDocument {
-	private int limit;
-	JTextFieldLimit(int limit) {
-		super();
-		this.limit = limit;
-	}
 
-	JTextFieldLimit(int limit, boolean upper) {
-		super();
-		this.limit = limit;
-	}
-
-	public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
-		if (str == null)
-			return;
-
-		if ((getLength() + str.length()) <= limit) {
-			super.insertString(offset, str, attr);
-		}
-	}
-}
 

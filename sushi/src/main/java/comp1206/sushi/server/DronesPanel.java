@@ -48,7 +48,10 @@ class DroneControl extends JPanel{
 		  Panel removeDronePanel = new Panel();
 		  removeDronePanel.setLayout(new FlowLayout());
 		  JButton removeDrone = new JButton("Remove drone");
+		JTextField errorText = new JTextField(13);
+		errorText.setEditable(false);
 		  removeDronePanel.add(removeDrone);
+		removeDronePanel.add(errorText);
 		  
 		  //make the table the same size as the drones
 
@@ -106,9 +109,10 @@ class DroneControl extends JPanel{
 			  if(!(droneAddText.getText().equals(""))) {
 				  try {
 					  server.addDrone(Integer.valueOf(droneAddText.getText()));
+					  errorText.setText(null);
 				  droneAddText.setText(null);
 				  } catch (Exception e) {
-						e.printStackTrace();
+					  errorText.setText("Only numbers");
 				  }
 				  updateTable(droneTableModel,server);
 			  }	
@@ -119,9 +123,10 @@ class DroneControl extends JPanel{
 				  try {
 					  Drone drone = (Drone)droneTableModel.getValueAt(droneTable.getSelectedRow(), 0);
 					  drone.setSpeed(Integer.valueOf(droneSpeedText.getText()));
+					  errorText.setText(null);
 					  droneSpeedText.setText(null);
 				  } catch (Exception e) {
-						e.printStackTrace();
+					  errorText.setText("Only numbers");
 				  }
 				  updateTable(droneTableModel,server);
 			  }
@@ -143,20 +148,8 @@ class DroneControl extends JPanel{
 			  Object[] droneRow = {drone, drone.getSpeed(), server.getDroneStatus(drone)};
 			  tableModel.addRow(droneRow);
 		  }  
-	}	  
-	
-	/**
-	 * 
-	 * @param area the text field it's bounding the rule to
-	 * @param maxLength @Integer the maximum number of characters
-	 * @Description Sets a bound of maxLength characters on the @JTextArea
-	 * @Example uptadeText(myTextField, 8);
-	 */
-	public void setMaxLimit(JTextArea area, int maxLength) {
-		area.setDocument(new JTextFieldLimit(maxLength));
-		area.setFocusTraversalKeysEnabled(true);
 	}
-	 
+
 }
 
 class DroneMap extends JPanel{

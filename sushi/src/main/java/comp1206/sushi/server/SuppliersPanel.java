@@ -1,6 +1,7 @@
 package comp1206.sushi.server;
 
 
+import comp1206.sushi.common.Ingredient;
 import comp1206.sushi.common.Postcode;
 import comp1206.sushi.common.Supplier;
 
@@ -9,17 +10,18 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 class SuppliersPanel extends JPanel {
-
+	public JComboBox<Postcode> postcodeDropBox = new JComboBox<Postcode>();
+	public DefaultTableModel suppliersTableModel = new DefaultTableModel() {
+		@Override
+		public boolean isCellEditable(int row, int column) {
+			return false;
+		}
+	};
 	  public SuppliersPanel(ServerInterface server) {
 			Panel suppliersPanel = new Panel();
 			suppliersPanel.setLayout(new BorderLayout());
 
-			DefaultTableModel suppliersTableModel = new DefaultTableModel(){
-				@Override
-				public boolean isCellEditable(int row, int column) {
-					return false;
-				}
-			};
+
 			suppliersTableModel.addColumn("Supplier name");
 			suppliersTableModel.addColumn("Supplier postcode");
 			updateTable(suppliersTableModel,server);
@@ -36,8 +38,11 @@ class SuppliersPanel extends JPanel {
 			add(suppliersPanel);
 		  	Panel supplierRemovePanel = new Panel();
 		  	supplierRemovePanel.setLayout(new FlowLayout());
-			JButton removeUserButton = new JButton("Remove supplier");
-			supplierRemovePanel.add(removeUserButton);
+		  JButton removeSupplierButton = new JButton("Remove supplier");
+		  JTextField errorText = new JTextField(30);
+		  errorText.setEditable(false);
+		  supplierRemovePanel.add(removeSupplierButton);
+		  supplierRemovePanel.add(errorText);
 
 
 			Panel supplierAddPanel = new Panel();
@@ -47,7 +52,7 @@ class SuppliersPanel extends JPanel {
 			supplierAddPanel.add(supplierAddNameText);
 			supplierAddPanel.add(new JLabel("Supplier postcode"));
 
-		  JComboBox<Postcode> postcodeDropBox = new JComboBox<Postcode>();
+
 		  postcodePopulate(server, postcodeDropBox);
 		  supplierAddPanel.add(postcodeDropBox);
 		  	JButton addSupplierButton = new JButton("Add supplier");
@@ -70,10 +75,18 @@ class SuppliersPanel extends JPanel {
 			  }
 		  });
 
-			removeUserButton.addActionListener(buttonPressed -> {
+		  removeSupplierButton.addActionListener(buttonPressed -> {
 				if(suppliersTable.getSelectedRow() !=-1) {
 					Supplier supplierToRemove = (Supplier) suppliersTableModel.getValueAt(suppliersTable.getSelectedRow(), 0);
+
 					try {
+						for (Ingredient ingredient : server.getIngredients()) {
+							if (supplierToRemove.equals(ingredient.getSupplier())) {
+								errorText.setText("Can't remove supplier without removing ingredeint");
+								return;
+							}
+						}
+						errorText.setText("");
 						server.removeSupplier(supplierToRemove);
 					} catch (ServerInterface.UnableToDeleteException e) {
 						e.printStackTrace();
@@ -83,7 +96,7 @@ class SuppliersPanel extends JPanel {
 			});
 		}
 
-	private void postcodePopulate(ServerInterface server, JComboBox box) {
+	public void postcodePopulate(ServerInterface server, JComboBox box) {
 		box.removeAllItems();
 		for (Postcode postcode : server.getPostcodes()) {
 			box.addItem(postcode);

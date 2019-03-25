@@ -1,14 +1,10 @@
 package comp1206.sushi.server;
 
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import comp1206.sushi.common.Order;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-
-import comp1206.sushi.common.Ingredient;
-import comp1206.sushi.common.Order;
+import java.awt.*;
 
 class OrdersPanel extends JPanel {
 
@@ -32,35 +28,17 @@ class OrdersPanel extends JPanel {
 		orderTable.setPreferredSize(new Dimension(400,400));
 		JScrollPane orderScrollTable = new JScrollPane(orderTable);
 
-
 		//the list render panel
 
 		oredersPanel.add(orderScrollTable, BorderLayout.CENTER);
 		add(oredersPanel);
-
 		Panel orderRemovePanel = new Panel();
 		orderRemovePanel.setLayout(new FlowLayout());
 		JButton removeOrderButton = new JButton("Remove order");
 		orderRemovePanel.add(removeOrderButton);
-
-
-//		Panel ingredientAddPanel = new Panel();
-//		ingredientAddPanel.setLayout(new FlowLayout());
-		//TO DO
-//		  ingredientAddPanel.add(new JLabel("Ingredient name"));
-//		  JTextField supplierAddNameText = new JTextField(20);
-//		  ingredientAddPanel.add(supplierAddNameText);
-//		  ingredientAddPanel.add(new JLabel("Ingredient postcode"));
-//		  JTextField supplierAddPostcodeText = new JTextField(20);
-//		  ingredientAddPanel.add(supplierAddPostcodeText);
-//		  JButton ingredientAddButton = new JButton("Submit");
-//		  ingredientAddPanel.add(ingredientAddButton);
-
-
 		Panel orderControlPanel = new Panel();
 		orderControlPanel.setLayout(new GridLayout(2,1,5,5));
 		orderControlPanel.add(orderRemovePanel);
-		//ingredientControlPanel.add(ingredientAddPanel);
 		oredersPanel.add(orderControlPanel, BorderLayout.SOUTH);
 
 		//@ACTIONLISTENERS

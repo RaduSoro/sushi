@@ -11,23 +11,29 @@ class IngredientsPanel extends JPanel {
 	public IngredientsPanel(ServerInterface server) {
 		JTabbedPane ingredientTabs = new JTabbedPane();
 		ingredientTabs.setTabPlacement(JTabbedPane.LEFT);
-		ingredientTabs.addTab("Ingredient control", new IngredientsControl(server));
-		ingredientTabs.addTab("Ingredient adding", new IngredientAdd(server));
+		IngredientsControl ic = new IngredientsControl(server);
+		IngredientAdd ia = new IngredientAdd(server);
+		ingredientTabs.addTab("Ingredient control", ic);
+		ingredientTabs.addTab("Ingredient adding", ia);
+		ingredientTabs.addChangeListener(ChangeListener -> {
+			ic.updateTable(ic.ingredientsTableModel, server);
+			ia.supplierPopulate(server, ia.supplierDropDown);
+		});
 		add(ingredientTabs);
 	}
-
 }
 
 class IngredientsControl extends JPanel {
+	public DefaultTableModel ingredientsTableModel = new DefaultTableModel() {
+		@Override
+		public boolean isCellEditable(int row, int column) {
+			return false;
+		}
+	};
 	public IngredientsControl(ServerInterface server) {
 		  Panel ingredientsPanel = new Panel();
 		  ingredientsPanel.setLayout(new BorderLayout());
-		  DefaultTableModel ingredientsTableModel = new DefaultTableModel(){
-			  @Override
-			  public boolean isCellEditable(int row, int column) {
-				  return false;
-			  }
-		  };
+
 		  ingredientsTableModel.addColumn("Ingredient name");
 		  ingredientsTableModel.addColumn("Measure units");
 		  ingredientsTableModel.addColumn("Supplier");
@@ -81,7 +87,26 @@ class IngredientsControl extends JPanel {
 		  add(ingredientsPanel);
 
 		  //@ACTIONLISTENERS
-		  removeIngredientButton.addActionListener(buttonPressed -> {
+		ingredientTresholdButton.addActionListener(buttonPressed -> {
+			if (ingredientsTable.getSelectedRow() != -1 && (!(ingedientsThresholdText.getText().equals("")))) {
+				Ingredient ingredient = (Ingredient) ingredientsTableModel.getValueAt(ingredientsTable.getSelectedRow(), 0);
+				ingredient.setRestockThreshold(Integer.valueOf(ingedientsThresholdText.getText()));
+				ingedientsThresholdText.setText("");
+				updateTable(ingredientsTableModel, server);
+			}
+		});
+
+		ingredientRestockAmmountButton.addActionListener(buttonPressed -> {
+			if (ingredientsTable.getSelectedRow() != -1 && (!(ingredientsRestockAmmountText.getText().equals("")))) {
+				Ingredient ingredient = (Ingredient) ingredientsTableModel.getValueAt(ingredientsTable.getSelectedRow(), 0);
+				ingredient.setRestockAmount(Integer.valueOf(ingredientsRestockAmmountText.getText()));
+				ingredientsRestockAmmountText.setText("");
+				updateTable(ingredientsTableModel, server);
+			}
+		});
+
+
+		removeIngredientButton.addActionListener(buttonPressed -> {
 			  if(ingredientsTable.getSelectedRow() !=-1) {
 				  Ingredient ingredientToRemove = (Ingredient) ingredientsTableModel.getValueAt(ingredientsTable.getSelectedRow(), 0);
 				  try {
@@ -112,13 +137,14 @@ class IngredientsControl extends JPanel {
 }
 
 class IngredientAdd extends JPanel {
+	public JComboBox<Supplier> supplierDropDown = new JComboBox<Supplier>();
+	private String[] unitCombos = {"grams", "ounces"};
+	public JComboBox<String> unitDropDown = new JComboBox<String>(unitCombos);
 	public IngredientAdd(ServerInterface server) {
 		Panel addIngredientPanel = new Panel();
 		addIngredientPanel.setLayout(new GridLayout(6, 2, 5, 5));
 		JTextField ingredientNameText = new JTextField(15);
-		String[] unitCombos = {"grams", "ounces"};
-		JComboBox<String> unitDropDown = new JComboBox<String>(unitCombos);
-		JComboBox<Supplier> supplierDropDown = new JComboBox<Supplier>();
+
 		supplierPopulate(server, supplierDropDown);
 		JTextField ingredientRestockAmount = new JTextField(4);
 		JTextField ingredientRestockThreshold = new JTextField(4);
@@ -140,10 +166,23 @@ class IngredientAdd extends JPanel {
 		addIngredientPanel.add(submitPanel);
 		add(addIngredientPanel);
 
+		submitButton.addActionListener(buttonPressed -> {
+			if (ingredientNameText.getText().equals("")) return;
+			if (ingredientRestockAmount.getText().equals("")) return;
+			if (ingredientRestockThreshold.getText().equals("")) return;
+			server.addIngredient(ingredientNameText.getText(), (String) unitDropDown.getSelectedItem(),
+					(Supplier) supplierDropDown.getSelectedItem(),
+					Integer.valueOf(ingredientRestockThreshold.getText()),
+					Integer.valueOf(ingredientRestockAmount.getText()));
+			ingredientNameText.setText("");
+			ingredientRestockAmount.setText("");
+			ingredientRestockThreshold.setText("");
+		});
+
 
 	}
 
-	private void supplierPopulate(ServerInterface server, JComboBox box) {
+	public void supplierPopulate(ServerInterface server, JComboBox box) {
 		box.removeAllItems();
 		for (Supplier supplier : server.getSuppliers()) {
 			box.addItem(supplier);
